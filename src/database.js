@@ -3,7 +3,7 @@ const {promisify} = require('util');
 
 const {database} = require('./keys');
 
-const pool = mysql.createPool(database);
+const  pool = mysql.createPool(database);
 
 pool.getConnection((err, connection) => {
     if (err) {
@@ -15,15 +15,20 @@ pool.getConnection((err, connection) => {
         }
         if(err.code === 'ECONNREFUSED'){
             console.error('DATABASE CONNECTION WAS REFUSED');
+            console.error(err.code);
         }
+        if(err.code === 'ER_NOT_SUPPORTED_AUTH_MODE'){
+            console.error('DATABASE not sopourt auto-mode');
+        }
+
     }
 
     if (connection) connection.release();
-    console.log('DB is Connected');
+        console.log('DB is Connected');
     return
 });
 
 //Promisify Pool Query
-pool.query = promisify(pool.query)
+pool.query = promisify(pool.query);
 
 module.exports = pool;
